@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rick and Morty - Page 2</title>
+    <style>
+        /* ESTILOS BASE */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f8; padding: 30px; color: #333; }
+
+        .nav-bar { display: flex; justify-content: space-between; max-width: 1200px; margin: 0 auto 30px auto; }
+        .btn-back-page { background-color: #64748b; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; }
+        .btn-back-page:hover { background-color: #475569; }
+
+        .header { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px; }
+
+        .search-input {
+            width: 100%; max-width: 600px; padding: 15px 25px; border-radius: 30px;
+            border: 2px solid #ddd; font-size: 16px; outline: none; transition: 0.3s;
+        }
+        .search-input:focus { border-color: #10b981; }
+
+        /* Botones de Endpoints */
+        .endpoints-container { display: flex; gap: 10px; }
+        .btn-endpoint { padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; background: #e2e8f0; transition: 0.2s; }
+        .btn-endpoint.active { background: #10b981; color: white; }
+
+        #loader { color: #f59e0b; font-weight: bold; display: none; margin-top: 10px; }
+
+        /* GRID RESPONSIVE */
+        .grid-container { display: grid; gap: 20px; max-width: 1200px; margin: 0 auto; grid-template-columns: 1fr; }
+        @media (min-width: 600px) { .grid-container { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 900px) { .grid-container { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 1200px) { .grid-container { grid-template-columns: repeat(4, 1fr); } }
+
+        /* TARJETAS */
+        .card {
+            background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: center; border: 1px solid #eee; transition: 0.2s; cursor: pointer;
+        }
+        .card:hover { transform: translateY(-5px); border-color: #10b981; box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+        .card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-body { padding: 20px; }
+        .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; }
+        .card-text { font-size: 0.9rem; color: #555; }
+
+        /* ==========================================
+           NUEVO: ESTILOS DEL MODAL (POPUP)
+           ========================================== */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-content {
+            background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 450px;
+            position: relative; text-align: center; transform: translateY(-20px); transition: 0.3s;
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+
+        /* El botón BACK dentro del Popup */
+        .btn-modal-back {
+            background-color: #ef4444; color: white; border: none; padding: 10px 20px;
+            border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 20px;
+            font-size: 1.1rem; transition: 0.2s;
+        }
+        .btn-modal-back:hover { background-color: #dc2626; }
+
+        .modal-image { width: 100%; border-radius: 10px; max-height: 250px; object-fit: cover; margin-bottom: 15px; }
+        .modal-detail-text { font-size: 1.1rem; color: #444; margin-bottom: 8px; text-align: left; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .modal-detail-text strong { color: #111; }
+    </style>
+</head>
+<body>
+
+<!-- Navegación Superior -->
+<div class="nav-bar">
+    <h2>Universo Rick & Morty</h2>
+    <a href="index.html" class="btn-back-page">⬅ Volver a Estudiantes</a>
+</div>
+
+<!-- Buscador -->
+<header class="header">
+    <div class="endpoints-container">
+        <button class="btn-endpoint active" onclick="setEndpoint('character', this)">1. Personajes</button>
+        <button class="btn-endpoint" onclick="setEndpoint('location', this)">2. Lugares</button>
+        <button class="btn-endpoint" onclick="setEndpoint('episode', this)">3. Episodios</button>
+    </div>
+
+    <input type="text" id="searchInput" class="search-input" placeholder="Escribe para buscar (Nombre o ID)...">
+    <div id="loader">⏳ Esperando 4 segundos (Debounce) para consultar la API...</div>
+</header>
+
+<!-- Contenedor de Tarjetas -->
+<main id="rmGrid" class="grid-container"></main>
+
+<!-- ==========================================
+     NUEVO: EL MODAL (POPUP)
+     ========================================== -->
+<div id="infoModal" class="modal-overlay">
+    <div class="modal-content">
+        <!-- Botón de BACK pedido -->
+        <button class="btn-modal-back" onclick="closeModal()">⬅ BACK (Cerrar)</button>
+
+        <!-- Aquí se inyecta la información dinámicamente -->
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    const BASE_URL = 'https://rickandmortyapi.com/api';
+    let currentEndpoint = 'character';
+    let searchTimeout;
+
+    // Esta variable guardará los resultados actuales para pasarlos al Popup
+    let currentItems = [];
+
+    function setEndpoint(endpointName, btnElement) {
+        currentEndpoint = endpointName;
+        document.querySelectorAll('.btn-endpoint').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+
+        document.getElementById('searchInput').value = '';
+        fetchData('');
+    }
+
+    function fetchData(query) {
+        const grid = document.getElementById('rmGrid');
+        const isId = query !== '' && !isNaN(query);
+
+        let url = query === '' ? `${BASE_URL}/${currentEndpoint}` :
+            isId ? `${BASE_URL}/${currentEndpoint}/${query}` :
+                `${BASE_URL}/${currentEndpoint}/?name=${query}`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) throw new Error('No hay resultados');
+                return response.json();
+            })
+            .then(data => {
+                currentItems = isId ? [data] : data.results;
+                renderCards(currentItems);
+            })
+            .catch(error => {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; font-weight:bold; color:#ef4444;">No se encontró nada con esa búsqueda.</p>';
+                currentItems = [];
+            });
+    }
+
+    function renderCards(items) {
+        const grid = document.getElementById('rmGrid');
+        grid.innerHTML = '';
+
+        // Pasamos el 'index' al openModal para saber a cuál le dimos clic
+        items.forEach((item, index) => {
+            let html = `<div class="card" onclick="openModal(${index})">`;
+
+            if (currentEndpoint === 'character') {
+                html += `<img src="${item.image}" alt="${item.name}">`;
+                html += `<div class="card-body">
+                                <div class="card-title">${item.name} <span style="font-size:0.8rem; color:#888;">(#${item.id})</span></div>
+                             </div>`;
+            } else {
+                html += `<div class="card-body">
+                                <div class="card-title">${item.name} <span style="font-size:0.8rem; color:#888;">(#${item.id})</span></div>
+                             </div>`;
+            }
+
+            html += `</div>`;
+            grid.innerHTML += html;
+        });
+    }
+
+    // ==========================================
+    // NUEVO: LÓGICA DEL MODAL
+    // ==========================================
+    function openModal(index) {
+        const item = currentItems[index];
+        const modalBody = document.getElementById('modalBody');
+        let html = '';
+
+        // Construimos la info dependiendo del endpoint
+        if (currentEndpoint === 'character') {
+            html += `<img src="${item.image}" class="modal-image">`;
+            html += `<h2 style="margin-bottom:15px; font-size:1.8rem;">${item.name}</h2>`;
+            html += `<div class="modal-detail-text"><strong>ID:</strong> ${item.id}</div>`;
+            html += `<div class="modal-detail-text"><strong>Especie:</strong> ${item.species}</div>`;
+            html += `<div class="modal-detail-text"><strong>Estado:</strong> ${item.status}</div>`;
+            html += `<div class="modal-detail-text"><strong>Género:</strong> ${item.gender}</div>`;
+            html += `<div class="modal-detail-text"><strong>Origen:</strong> ${item.origin.name}</div>`;
+        }
+        else if (currentEndpoint === 'location') {
+            html += `<h2 style="margin-bottom:15px; font-size:1.8rem;">${item.name}</h2>`;
+            html += `<div class="modal-detail-text"><strong>ID:</strong> ${item.id}</div>`;
+            html += `<div class="modal-detail-text"><strong>Tipo:</strong> ${item.type}</div>`;
+            html += `<div class="modal-detail-text"><strong>Dimensión:</strong> ${item.dimension}</div>`;
+        }
+        else if (currentEndpoint === 'episode') {
+            html += `<h2 style="margin-bottom:15px; font-size:1.8rem;">${item.name}</h2>`;
+            html += `<div class="modal-detail-text"><strong>ID:</strong> ${item.id}</div>`;
+            html += `<div class="modal-detail-text"><strong>Código:</strong> ${item.episode}</div>`;
+            html += `<div class="modal-detail-text"><strong>Lanzamiento:</strong> ${item.air_date}</div>`;
+        }
+
+        modalBody.innerHTML = html;
+        document.getElementById('infoModal').classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('infoModal').classList.remove('active');
+    }
+
+    // Delay de 4s
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const query = e.target.value.trim();
+        const loader = document.getElementById('loader');
+
+        loader.style.display = 'block';
+        clearTimeout(searchTimeout);
+
+        searchTimeout = setTimeout(() => {
+            loader.style.display = 'none';
+            fetchData(query);
+        }, 4000);
+    });
+
+    fetchData('');
+</script>
+</body>
+</html>

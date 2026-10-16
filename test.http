@@ -1,0 +1,12 @@
+### 1. Insertar un nuevo estudiante (Endpoint POST)
+POST http://localhost:8080/api/students
+Content-Type: application/json
+
+{
+  "firstName": "Carlos",
+  "lastName": "Quiros",
+  "email": "carlos@ejemplo.com"
+}
+
+### 2. Consultar la lista de estudiantes (Endpoint GET)
+GET http://localhost:8080/api/students
