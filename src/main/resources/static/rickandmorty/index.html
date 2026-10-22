@@ -1,52 +1,52 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rick and Morty</title>
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
 <div class="nav-bar">
-    <h2>Universo Rick & Morty</h2>
-    <a href="/index.html" class="btn-back-page">⬅ Volver a Estudiantes</a>
+    <h2>Rick & Morty Universe</h2>
+    <a href="/index.html" class="btn-back-page">⬅ Back to Students</a>
 </div>
 
-<!-- SELECT ANIDADO -->
+<!-- NESTED SELECT -->
 <section class="panel">
-    <h3>Explorar por categoría</h3>
+    <h3>Browse by category</h3>
     <div class="selects">
-        <select id="selectTipo">
-            <option value="">1. Elige una categoría...</option>
-            <option value="lugares">Lugares</option>
-            <option value="episodios">Episodios</option>
+        <select id="categorySelect">
+            <option value="">1. Choose a category...</option>
+            <option value="locations">Locations</option>
+            <option value="episodes">Episodes</option>
         </select>
 
-        <select id="selectItem" disabled>
-            <option value="">2. Primero elige una categoría</option>
+        <select id="itemSelect" disabled>
+            <option value="">2. Choose a category first</option>
         </select>
     </div>
 </section>
 
-<!-- BUSCADOR CON DEBOUNCE -->
+<!-- DEBOUNCED SEARCH -->
 <section class="panel">
-    <h3>Buscar personaje por nombre</h3>
-    <input type="text" id="buscador" class="search-input" placeholder="Escribe un nombre (ej. rick)...">
+    <h3>Search character by name</h3>
+    <input type="text" id="searchInput" class="search-input" placeholder="Type a name (e.g. rick)...">
 </section>
 
-<p id="estado"></p>
-<main id="resultados" class="grid-container"></main>
+<p id="status"></p>
+<main id="results" class="grid-container"></main>
 
-<!-- MODAL DE DETALLE -->
+<!-- DETAIL MODAL -->
 <div id="modal" class="modal-overlay">
     <div class="modal-content">
-        <button id="cerrarModal" class="btn-modal-back">⬅ Cerrar</button>
+        <button id="closeModal" class="btn-modal-back">⬅ Close</button>
         <div id="modalBody"></div>
     </div>
 </div>
 
-<!-- 1º jQuery, 2º nuestro código (el orden importa) -->
+<!-- 1st jQuery, 2nd our code (order matters) -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="js/app.js"></script>
 </body>

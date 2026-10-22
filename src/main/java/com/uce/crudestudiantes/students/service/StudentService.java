@@ -1,7 +1,7 @@
-package com.uce.crudestudiantes.estudiantes.service;
+package com.uce.crudestudiantes.students.service;
 
-import com.uce.crudestudiantes.estudiantes.model.Student;
-import com.uce.crudestudiantes.estudiantes.repository.StudentRepository;
+import com.uce.crudestudiantes.students.model.Student;
+import com.uce.crudestudiantes.students.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;

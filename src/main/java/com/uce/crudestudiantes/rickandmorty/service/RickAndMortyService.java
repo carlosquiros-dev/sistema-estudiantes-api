@@ -1,9 +1,9 @@
 package com.uce.crudestudiantes.rickandmorty.service;
 
-import com.uce.crudestudiantes.rickandmorty.model.Episodio;
-import com.uce.crudestudiantes.rickandmorty.model.Lugar;
-import com.uce.crudestudiantes.rickandmorty.model.Personaje;
-import com.uce.crudestudiantes.rickandmorty.model.RespuestaApi;
+import com.uce.crudestudiantes.rickandmorty.model.ApiResponse;
+import com.uce.crudestudiantes.rickandmorty.model.RmCharacter;
+import com.uce.crudestudiantes.rickandmorty.model.RmEpisode;
+import com.uce.crudestudiantes.rickandmorty.model.RmLocation;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -18,67 +18,67 @@ public class RickAndMortyService {
 
     private final RestClient restClient = RestClient.create("https://rickandmortyapi.com/api");
 
-    // ===================== LISTAS (para llenar el select 2) =====================
+    // ===================== LISTS (to fill the second select) =====================
 
-    public List<Lugar> listarLugares() {
-        return traerTodasLasPaginas("/location", new ParameterizedTypeReference<RespuestaApi<Lugar>>() {});
+    public List<RmLocation> getLocations() {
+        return fetchAllPages("/location", new ParameterizedTypeReference<ApiResponse<RmLocation>>() {});
     }
 
-    public List<Episodio> listarEpisodios() {
-        return traerTodasLasPaginas("/episode", new ParameterizedTypeReference<RespuestaApi<Episodio>>() {});
+    public List<RmEpisode> getEpisodes() {
+        return fetchAllPages("/episode", new ParameterizedTypeReference<ApiResponse<RmEpisode>>() {});
     }
 
-    // ===================== BÚSQUEDA (para el buscador con debounce) =====================
+    // ===================== SEARCH (for the debounced search box) =====================
 
-    public List<Personaje> buscarPersonajes(String nombre) {
+    public List<RmCharacter> searchCharacters(String name) {
         try {
-            RespuestaApi<Personaje> respuesta = restClient.get()
-                    .uri("/character/?name={nombre}", nombre)
+            ApiResponse<RmCharacter> response = restClient.get()
+                    .uri("/character/?name={name}", name)
                     .retrieve()
-                    .body(new ParameterizedTypeReference<RespuestaApi<Personaje>>() {});
-            return respuesta.results();
+                    .body(new ParameterizedTypeReference<ApiResponse<RmCharacter>>() {});
+            return response.results();
         } catch (HttpClientErrorException.NotFound e) {
-            return List.of(); // la API responde 404 cuando no encuentra a nadie
+            return List.of(); // the API answers 404 when nobody matches
         }
     }
 
-    // ===================== ANIDADOS (lo que sale al elegir en el select 2) =====================
+    // ===================== NESTED (what appears after choosing in the second select) =====================
 
-    public List<Personaje> residentesDeLugar(int idLugar) {
-        Lugar lugar = restClient.get()
-                .uri("/location/{id}", idLugar)
+    public List<RmCharacter> getLocationResidents(int locationId) {
+        RmLocation location = restClient.get()
+                .uri("/location/{id}", locationId)
                 .retrieve()
-                .body(Lugar.class);
-        return personajesDesdeUrls(lugar.residents());
+                .body(RmLocation.class);
+        return charactersFromUrls(location.residents());
     }
 
-    public List<Personaje> personajesDeEpisodio(int idEpisodio) {
-        Episodio episodio = restClient.get()
-                .uri("/episode/{id}", idEpisodio)
+    public List<RmCharacter> getEpisodeCharacters(int episodeId) {
+        RmEpisode episode = restClient.get()
+                .uri("/episode/{id}", episodeId)
                 .retrieve()
-                .body(Episodio.class);
-        return personajesDesdeUrls(episodio.characters());
+                .body(RmEpisode.class);
+        return charactersFromUrls(episode.characters());
     }
 
-    // ===================== MÉTODOS DE AYUDA (privados) =====================
+    // ===================== HELPER METHODS (private) =====================
 
-    private <T> List<T> traerTodasLasPaginas(String ruta, ParameterizedTypeReference<RespuestaApi<T>> tipo) {
-        List<T> todos = new ArrayList<>();
-        int pagina = 1;
-        int totalPaginas;
+    private <T> List<T> fetchAllPages(String path, ParameterizedTypeReference<ApiResponse<T>> type) {
+        List<T> all = new ArrayList<>();
+        int page = 1;
+        int totalPages;
         do {
-            RespuestaApi<T> respuesta = restClient.get()
-                    .uri(ruta + "?page={p}", pagina)
+            ApiResponse<T> response = restClient.get()
+                    .uri(path + "?page={p}", page)
                     .retrieve()
-                    .body(tipo);
-            todos.addAll(respuesta.results());
-            totalPaginas = respuesta.info().pages();
-            pagina++;
-        } while (pagina <= totalPaginas);
-        return todos;
+                    .body(type);
+            all.addAll(response.results());
+            totalPages = response.info().pages();
+            page++;
+        } while (page <= totalPages);
+        return all;
     }
 
-    private List<Personaje> personajesDesdeUrls(List<String> urls) {
+    private List<RmCharacter> charactersFromUrls(List<String> urls) {
         if (urls.isEmpty()) {
             return List.of();
         }
@@ -88,11 +88,11 @@ public class RickAndMortyService {
                 .collect(Collectors.joining(","));
 
         if (urls.size() == 1) {
-            // con un solo id, la API devuelve un objeto (no una lista)
-            Personaje uno = restClient.get().uri("/character/{ids}", ids).retrieve().body(Personaje.class);
-            return List.of(uno);
+            // with a single id the API returns one object (not a list)
+            RmCharacter single = restClient.get().uri("/character/{ids}", ids).retrieve().body(RmCharacter.class);
+            return List.of(single);
         }
-        Personaje[] varios = restClient.get().uri("/character/{ids}", ids).retrieve().body(Personaje[].class);
-        return List.of(varios);
+        RmCharacter[] many = restClient.get().uri("/character/{ids}", ids).retrieve().body(RmCharacter[].class);
+        return List.of(many);
     }
 }

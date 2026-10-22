@@ -1,4 +1,4 @@
-package com.uce.crudestudiantes.estudiantes.model;
+package com.uce.crudestudiantes.students.model;
 
 import jakarta.persistence.*;
 
@@ -14,17 +14,17 @@ public class Student {
     private String lastName;
     private String email;
 
-    // Constructor vacío (requerido por JPA)
+    // Empty constructor (required by JPA)
     public Student() {}
 
-    // Constructor con parámetros
+    // Constructor with parameters
     public Student(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
     }
 
-    // Getters y Setters
+    // Getters and setters
     public Long getId() {
         return id;
     }

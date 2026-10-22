@@ -3,11 +3,9 @@ package com.uce.crudestudiantes.rickandmorty.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
+// The "box" the API returns for lists: { "info": {...}, "results": [...] }
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Lugar(
-        int id,
-        String name,
-        String type,
-        String dimension,
-        List<String> residents
+public record ApiResponse<T>(
+        PageInfo info,
+        List<T> results
 ) {}

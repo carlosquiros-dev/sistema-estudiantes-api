@@ -1,8 +1,8 @@
 package com.uce.crudestudiantes.rickandmorty.controller;
 
-import com.uce.crudestudiantes.rickandmorty.model.Episodio;
-import com.uce.crudestudiantes.rickandmorty.model.Lugar;
-import com.uce.crudestudiantes.rickandmorty.model.Personaje;
+import com.uce.crudestudiantes.rickandmorty.model.RmCharacter;
+import com.uce.crudestudiantes.rickandmorty.model.RmEpisode;
+import com.uce.crudestudiantes.rickandmorty.model.RmLocation;
 import com.uce.crudestudiantes.rickandmorty.service.RickAndMortyService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,34 +22,34 @@ public class RickAndMortyController {
         this.service = service;
     }
 
-    // ---------- Para llenar el select 2 ----------
+    // ---------- To fill the second select ----------
 
-    @GetMapping("/lugares")
-    public List<Lugar> listarLugares() {
-        return service.listarLugares();
+    @GetMapping("/locations")
+    public List<RmLocation> getLocations() {
+        return service.getLocations();
     }
 
-    @GetMapping("/episodios")
-    public List<Episodio> listarEpisodios() {
-        return service.listarEpisodios();
+    @GetMapping("/episodes")
+    public List<RmEpisode> getEpisodes() {
+        return service.getEpisodes();
     }
 
-    // ---------- Endpoints anidados ----------
+    // ---------- Nested endpoints ----------
 
-    @GetMapping("/lugares/{id}/residentes")
-    public List<Personaje> residentesDeLugar(@PathVariable int id) {
-        return service.residentesDeLugar(id);
+    @GetMapping("/locations/{id}/residents")
+    public List<RmCharacter> getLocationResidents(@PathVariable int id) {
+        return service.getLocationResidents(id);
     }
 
-    @GetMapping("/episodios/{id}/personajes")
-    public List<Personaje> personajesDeEpisodio(@PathVariable int id) {
-        return service.personajesDeEpisodio(id);
+    @GetMapping("/episodes/{id}/characters")
+    public List<RmCharacter> getEpisodeCharacters(@PathVariable int id) {
+        return service.getEpisodeCharacters(id);
     }
 
-    // ---------- Buscador con debounce ----------
+    // ---------- Debounced search ----------
 
-    @GetMapping("/personajes")
-    public List<Personaje> buscarPersonajes(@RequestParam(defaultValue = "") String nombre) {
-        return service.buscarPersonajes(nombre);
+    @GetMapping("/characters")
+    public List<RmCharacter> searchCharacters(@RequestParam(defaultValue = "") String name) {
+        return service.searchCharacters(name);
     }
 }

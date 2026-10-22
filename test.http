@@ -1,12 +1,27 @@
-### 1. Insertar un nuevo estudiante (Endpoint POST)
+### 1. Create a new student (POST endpoint)
 POST http://localhost:8080/api/students
 Content-Type: application/json
 
 {
   "firstName": "Carlos",
   "lastName": "Quiros",
-  "email": "carlos@ejemplo.com"
+  "email": "carlos@example.com"
 }
 
-### 2. Consultar la lista de estudiantes (Endpoint GET)
+### 2. Get the list of students (GET endpoint)
 GET http://localhost:8080/api/students
+
+### 3. Rick and Morty: all locations (fills the second select)
+GET http://localhost:8080/api/rickandmorty/locations
+
+### 4. Rick and Morty: all episodes (fills the second select)
+GET http://localhost:8080/api/rickandmorty/episodes
+
+### 5. Rick and Morty: residents of a location (nested endpoint)
+GET http://localhost:8080/api/rickandmorty/locations/1/residents
+
+### 6. Rick and Morty: characters of an episode (nested endpoint)
+GET http://localhost:8080/api/rickandmorty/episodes/1/characters
+
+### 7. Rick and Morty: search characters by name (debounced search)
+GET http://localhost:8080/api/rickandmorty/characters?name=rick

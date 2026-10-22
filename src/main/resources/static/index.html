@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estudiantes - Page 1 (CRUD)</title>
+    <title>Students - Page 1 (CRUD)</title>
     <style>
-        /* ESTILOS BASE */
+        /* BASE STYLES */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f8; padding: 30px; color: #333; }
 
-        /* HEADER Y BUSCADOR */
+        /* HEADER AND SEARCH */
         .header { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; max-width: 800px; margin-left: auto; margin-right: auto; }
         .search-input {
             flex-grow: 1; padding: 15px 25px; border-radius: 30px;
@@ -30,7 +30,7 @@
         @media (min-width: 900px) { .grid-container { grid-template-columns: repeat(3, 1fr); } }
         @media (min-width: 1200px) { .grid-container { grid-template-columns: repeat(4, 1fr); } }
 
-        /* TARJETAS */
+        /* CARDS */
         .card {
             background: white; padding: 25px 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             text-align: center; border: 1px solid #eee; transition: 0.2s; cursor: pointer;
@@ -38,7 +38,7 @@
         .card:hover { transform: translateY(-5px); border-color: #3b82f6; }
         .card-name { font-size: 1.2rem; font-weight: bold; }
 
-        /* MODALES (Ventanitas) */
+        /* MODALS (popups) */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center;
@@ -52,7 +52,7 @@
         .modal-overlay.active .modal-content { transform: translateY(0); }
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #888; }
 
-        /* FORMULARIO CRUD */
+        /* CRUD FORM */
         .form-input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; }
         .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; margin: 5px; }
         .btn-edit { background-color: #f59e0b; }
@@ -63,41 +63,41 @@
 <body>
 
 <header class="header">
-    <input type="text" id="searchInput" class="search-input" placeholder="Realtime search (Nombre, ID)...">
-    <button class="btn-add" onclick="openFormModal()">+ Nuevo</button>
+    <input type="text" id="searchInput" class="search-input" placeholder="Realtime search (Name, ID)...">
+    <button class="btn-add" onclick="openFormModal()">+ New</button>
 
-    <!-- ESTE ES EL BOTÓN NUEVO PARA IR A PAGE 2 -->
+    <!-- BUTTON TO GO TO PAGE 2 -->
     <a href="rickandmorty/index.html" class="btn-add" style="background-color: #10b981; text-decoration: none; display: flex; align-items: center;">API Rick & Morty ➡</a>
 </header>
 
 <!-- READ (GET) -->
 <main id="studentGrid" class="grid-container"></main>
 
-<!-- MODAL 1: VER DETALLES / UPDATE / DELETE -->
+<!-- MODAL 1: VIEW DETAILS / UPDATE / DELETE -->
 <div id="detailModal" class="modal-overlay">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal('detailModal')">&times;</span>
-        <h3 id="modalName" style="margin-bottom:15px; font-size: 1.5rem;">Nombre</h3>
+        <h3 id="modalName" style="margin-bottom:15px; font-size: 1.5rem;">Name</h3>
         <p id="modalEmail" style="color: #555; margin-bottom: 20px;">Email</p>
 
         <input type="hidden" id="currentId">
-        <button class="btn btn-edit" onclick="editStudent()">Editar (PUT)</button>
-        <button class="btn btn-delete" onclick="deleteStudent()">Borrar (DELETE)</button>
+        <button class="btn btn-edit" onclick="editStudent()">Edit (PUT)</button>
+        <button class="btn btn-delete" onclick="deleteStudent()">Delete (DELETE)</button>
     </div>
 </div>
 
-<!-- MODAL 2: FORMULARIO (CREATE Y UPDATE) -->
+<!-- MODAL 2: FORM (CREATE AND UPDATE) -->
 <div id="formModal" class="modal-overlay">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal('formModal')">&times;</span>
-        <h3 id="formTitle" style="margin-bottom: 20px;">Estudiante</h3>
+        <h3 id="formTitle" style="margin-bottom: 20px;">Student</h3>
 
         <form id="studentForm">
             <input type="hidden" id="studentId">
-            <input type="text" id="firstName" class="form-input" placeholder="Nombre" required>
-            <input type="text" id="lastName" class="form-input" placeholder="Apellido" required>
-            <input type="email" id="email" class="form-input" placeholder="Correo Electrónico" required>
-            <button type="submit" class="btn btn-save">Guardar Estudiante</button>
+            <input type="text" id="firstName" class="form-input" placeholder="First name" required>
+            <input type="text" id="lastName" class="form-input" placeholder="Last name" required>
+            <input type="email" id="email" class="form-input" placeholder="Email" required>
+            <button type="submit" class="btn btn-save">Save Student</button>
         </form>
     </div>
 </div>
@@ -130,7 +130,7 @@
         });
     }
 
-    // Búsqueda Realtime (Filtro en memoria)
+    // Realtime search (in-memory filter)
     document.getElementById('searchInput').addEventListener('input', e => {
         const kw = e.target.value.toLowerCase().trim();
         renderCards(allStudents.filter(s =>
@@ -159,33 +159,33 @@
             body: JSON.stringify(data)
         }).then(() => {
             closeModal('formModal');
-            loadData(); // Recargar datos
+            loadData(); // Reload data
         });
     });
 
     // ==========================================
-    // 3. ENDPOINT DELETE (ELIMINAR)
+    // 3. ENDPOINT DELETE
     // ==========================================
     function deleteStudent() {
         const id = document.getElementById('currentId').value;
-        if (confirm('¿Eliminar este estudiante?')) {
+        if (confirm('Delete this student?')) {
             fetch(`${API_URL}/${id}`, { method: 'DELETE' })
                 .then(() => {
                     closeModal('detailModal');
-                    loadData(); // Recargar datos
+                    loadData(); // Reload data
                 });
         }
     }
 
     // ==========================================
-    // CONTROL DE MODALES (VENTANAS)
+    // MODAL CONTROL (POPUPS)
     // ==========================================
     function openDetailModal(id, firstName, lastName, email) {
         document.getElementById('currentId').value = id;
         document.getElementById('modalName').innerText = `${firstName} ${lastName}`;
         document.getElementById('modalEmail').innerText = email;
 
-        // Guardamos datos temporales por si quiere editar
+        // Keep temporary data in case the user wants to edit
         document.getElementById('modalName').dataset.first = firstName;
         document.getElementById('modalName').dataset.last = lastName;
 
@@ -195,7 +195,7 @@
     function openFormModal() {
         document.getElementById('studentForm').reset();
         document.getElementById('studentId').value = '';
-        document.getElementById('formTitle').innerText = 'Nuevo Estudiante (POST)';
+        document.getElementById('formTitle').innerText = 'New Student (POST)';
         document.getElementById('formModal').classList.add('active');
     }
 
@@ -206,7 +206,7 @@
         document.getElementById('lastName').value = document.getElementById('modalName').dataset.last;
         document.getElementById('email').value = document.getElementById('modalEmail').innerText;
 
-        document.getElementById('formTitle').innerText = 'Editar Estudiante (PUT)';
+        document.getElementById('formTitle').innerText = 'Edit Student (PUT)';
         document.getElementById('formModal').classList.add('active');
     }
 
@@ -214,7 +214,7 @@
         document.getElementById(modalId).classList.remove('active');
     }
 
-    // Iniciar
+    // Start
     loadData();
 </script>
 </body>
