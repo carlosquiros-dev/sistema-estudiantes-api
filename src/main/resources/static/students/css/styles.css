@@ -1,0 +1,60 @@
+/* BASE STYLES */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f8; padding: 30px; color: #333; }
+
+/* HEADER AND SEARCH */
+.header { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; max-width: 800px; margin-left: auto; margin-right: auto; }
+.search-input {
+    flex-grow: 1; padding: 15px 25px; border-radius: 30px;
+    border: 2px solid #ddd; font-size: 16px; outline: none; transition: 0.3s;
+}
+.search-input:focus { border-color: #3b82f6; }
+.btn-add {
+    background-color: #3b82f6; color: white; border: none; padding: 0 25px;
+    border-radius: 30px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.2s;
+}
+.btn-add:hover { background-color: #2563eb; }
+.btn-rm { background-color: #10b981; text-decoration: none; display: flex; align-items: center; }
+.btn-rm:hover { background-color: #059669; }
+
+/* RESPONSIVE GRID */
+.grid-container {
+    display: grid; gap: 20px; max-width: 1200px; margin: 0 auto; grid-template-columns: 1fr;
+}
+@media (min-width: 600px) { .grid-container { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 900px) { .grid-container { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1200px) { .grid-container { grid-template-columns: repeat(4, 1fr); } }
+
+/* CARDS */
+.card {
+    background: white; padding: 25px 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    text-align: center; border: 1px solid #eee; transition: 0.2s; cursor: pointer;
+}
+.card:hover { transform: translateY(-5px); border-color: #3b82f6; }
+.card-name { font-size: 1.2rem; font-weight: bold; }
+.card-id { font-size: 0.8rem; color: #999; margin-top: 10px; }
+.empty-message { grid-column: 1 / -1; text-align: center; color: #888; }
+
+/* MODALS (popups) */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center;
+    z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s;
+}
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal-content {
+    background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px;
+    position: relative; text-align: center; transform: translateY(-20px); transition: 0.3s;
+}
+.modal-overlay.active .modal-content { transform: translateY(0); }
+.close-btn { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #888; }
+.modal-name { margin-bottom: 15px; font-size: 1.5rem; }
+.modal-email { color: #555; margin-bottom: 20px; }
+.form-title { margin-bottom: 20px; }
+
+/* CRUD FORM */
+.form-input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; }
+.btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; margin: 5px; }
+.btn-edit { background-color: #f59e0b; }
+.btn-delete { background-color: #ef4444; }
+.btn-save { background-color: #10b981; width: 100%; }
