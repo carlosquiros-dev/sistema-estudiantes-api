@@ -32,7 +32,10 @@ src/main/java/com/uce/crudestudiantes
     └── controller   → RickAndMortyController  # REST endpoints /api/rickandmorty
 
 src/main/resources/static
-├── index.html                 # Page 1: students
+├── index.html                 # Page 1: students (structure)
+├── students
+│   ├── css/styles.css         # design
+│   └── js/app.js              # CRUD behavior with jQuery
 └── rickandmorty
     ├── index.html             # Page 2: structure (view)
     ├── css/styles.css         # design
