@@ -1,5 +1,6 @@
-package com.uce.crudestudiantes;
+package com.uce.crudestudiantes.estudiantes.repository;
 
+import com.uce.crudestudiantes.estudiantes.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

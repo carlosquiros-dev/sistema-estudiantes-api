@@ -1,4 +1,4 @@
-package com.uce.crudestudiantes;
+package com.uce.crudestudiantes.estudiantes.model;
 
 import jakarta.persistence.*;
 

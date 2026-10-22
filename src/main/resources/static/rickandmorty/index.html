@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rick and Morty</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+<div class="nav-bar">
+    <h2>Universo Rick & Morty</h2>
+    <a href="/index.html" class="btn-back-page">⬅ Volver a Estudiantes</a>
+</div>
+
+<!-- SELECT ANIDADO -->
+<section class="panel">
+    <h3>Explorar por categoría</h3>
+    <div class="selects">
+        <select id="selectTipo">
+            <option value="">1. Elige una categoría...</option>
+            <option value="lugares">Lugares</option>
+            <option value="episodios">Episodios</option>
+        </select>
+
+        <select id="selectItem" disabled>
+            <option value="">2. Primero elige una categoría</option>
+        </select>
+    </div>
+</section>
+
+<!-- BUSCADOR CON DEBOUNCE -->
+<section class="panel">
+    <h3>Buscar personaje por nombre</h3>
+    <input type="text" id="buscador" class="search-input" placeholder="Escribe un nombre (ej. rick)...">
+</section>
+
+<p id="estado"></p>
+<main id="resultados" class="grid-container"></main>
+
+<!-- MODAL DE DETALLE -->
+<div id="modal" class="modal-overlay">
+    <div class="modal-content">
+        <button id="cerrarModal" class="btn-modal-back">⬅ Cerrar</button>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<!-- 1º jQuery, 2º nuestro código (el orden importa) -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

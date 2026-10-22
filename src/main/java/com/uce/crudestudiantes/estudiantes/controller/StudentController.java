@@ -1,5 +1,7 @@
-package com.uce.crudestudiantes;
+package com.uce.crudestudiantes.estudiantes.controller;
 
+import com.uce.crudestudiantes.estudiantes.model.Student;
+import com.uce.crudestudiantes.estudiantes.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
