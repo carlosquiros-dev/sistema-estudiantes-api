@@ -62,12 +62,15 @@ src/main/resources/static
    ```
    The `students` table is created automatically when the app starts.
 
-3. **Set your database credentials** in `src/main/resources/application.properties`:
-   ```properties
-   spring.datasource.url=jdbc:postgresql://localhost:5432/crud_db
-   spring.datasource.username=postgres
-   spring.datasource.password=YOUR_PASSWORD
-   ```
+3. **Set your database credentials** as environment variables (the password is never stored in the code):
+
+   | Variable | Default | Required | 
+4.    |---|---|---|
+   | `DB_URL` | `jdbc:postgresql://localhost:5432/crud_db` | No |
+   | `DB_USERNAME` | `postgres` | No |
+   | `DB_PASSWORD` | – | **Yes** |
+
+   In IntelliJ: **Run → Edit Configurations → Environment variables** → `DB_PASSWORD=your_password`
 
 4. **Run the app**: open `CrudEstudiantesApplication` and click ▶️, or run:
    ```bash
