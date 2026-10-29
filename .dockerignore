@@ -2,4 +2,5 @@ target/
 .idea/
 .git/
 .env
+.env.*
 *.iml
