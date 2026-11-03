@@ -1,0 +1,13 @@
+# Used only on the extra app instances (sistema-estudiantes-app-2 and -app-3):
+#   docker compose -f docker-compose.app-server.yml up -d
+# Runs only the application and connects it to the shared database on the main instance.
+services:
+  app:
+    image: carlosquirosdev/sistema-estudiantes-api:prod
+    restart: unless-stopped
+    environment:
+      DB_URL: jdbc:postgresql://${DB_HOST}:5432/crud_db
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "8080:8080"

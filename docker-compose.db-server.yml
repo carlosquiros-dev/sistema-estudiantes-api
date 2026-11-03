@@ -1,0 +1,8 @@
+# Used only on the main instance (sistema-estudiantes), which runs the app and the shared database:
+#   docker compose -f docker-compose.yml -f docker-compose.db-server.yml up -d app-prod
+# Publishes PostgreSQL so the other app instances can connect.
+# The security group allows port 5432 only from the app instances.
+services:
+  db-prod:
+    ports:
+      - "5432:5432"

@@ -1,0 +1,126 @@
+# ---------- Shared settings (written once, reused by every environment) ----------
+x-db: &db
+  image: postgres:17
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+    interval: 5s
+    timeout: 5s
+    retries: 10
+
+x-app: &app
+  build: .
+  restart: unless-stopped
+
+services:
+  # ==================== DEV (port 8081) ====================
+  db-dev:
+    <<: *db
+    environment:
+      POSTGRES_DB: crud_db
+      POSTGRES_USER: ${DEV_DB_USERNAME}
+      POSTGRES_PASSWORD: ${DEV_DB_PASSWORD}
+    volumes:
+      - pgdata-dev:/var/lib/postgresql/data
+    networks: [net-dev]
+
+  app-dev:
+    <<: *app
+    image: carlosquirosdev/sistema-estudiantes-api:dev
+    depends_on:
+      db-dev:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db-dev:5432/crud_db
+      DB_USERNAME: ${DEV_DB_USERNAME}
+      DB_PASSWORD: ${DEV_DB_PASSWORD}
+    ports:
+      - "8081:8080"
+    networks: [net-dev]
+
+  # ==================== QA (port 8082) ====================
+  db-qa:
+    <<: *db
+    environment:
+      POSTGRES_DB: crud_db
+      POSTGRES_USER: ${QA_DB_USERNAME}
+      POSTGRES_PASSWORD: ${QA_DB_PASSWORD}
+    volumes:
+      - pgdata-qa:/var/lib/postgresql/data
+    networks: [net-qa]
+
+  app-qa:
+    <<: *app
+    image: carlosquirosdev/sistema-estudiantes-api:qa
+    depends_on:
+      db-qa:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db-qa:5432/crud_db
+      DB_USERNAME: ${QA_DB_USERNAME}
+      DB_PASSWORD: ${QA_DB_PASSWORD}
+    ports:
+      - "8082:8080"
+    networks: [net-qa]
+
+  # ==================== STAGING (port 8083) ====================
+  db-staging:
+    <<: *db
+    environment:
+      POSTGRES_DB: crud_db
+      POSTGRES_USER: ${STAGING_DB_USERNAME}
+      POSTGRES_PASSWORD: ${STAGING_DB_PASSWORD}
+    volumes:
+      - pgdata-staging:/var/lib/postgresql/data
+    networks: [net-staging]
+
+  app-staging:
+    <<: *app
+    image: carlosquirosdev/sistema-estudiantes-api:staging
+    depends_on:
+      db-staging:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db-staging:5432/crud_db
+      DB_USERNAME: ${STAGING_DB_USERNAME}
+      DB_PASSWORD: ${STAGING_DB_PASSWORD}
+    ports:
+      - "8083:8080"
+    networks: [net-staging]
+
+  # ==================== PROD (port 8080) ====================
+  db-prod:
+    <<: *db
+    environment:
+      POSTGRES_DB: crud_db
+      POSTGRES_USER: ${PROD_DB_USERNAME}
+      POSTGRES_PASSWORD: ${PROD_DB_PASSWORD}
+    volumes:
+      - pgdata-prod:/var/lib/postgresql/data
+    networks: [net-prod]
+
+  app-prod:
+    <<: *app
+    image: carlosquirosdev/sistema-estudiantes-api:prod
+    depends_on:
+      db-prod:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db-prod:5432/crud_db
+      DB_USERNAME: ${PROD_DB_USERNAME}
+      DB_PASSWORD: ${PROD_DB_PASSWORD}
+    ports:
+      - "8080:8080"
+    networks: [net-prod]
+
+volumes:
+  pgdata-dev:
+  pgdata-qa:
+  pgdata-staging:
+  pgdata-prod:
+
+networks:
+  net-dev:
+  net-qa:
+  net-staging:
+  net-prod:
